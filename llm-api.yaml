@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: llm-api-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: llm-api
+  template:
+    metadata:
+      labels:
+        app: llm-api
+    spec:
+      containers:
+        - name: llm-api
+          image: gcr.io/my-terraform-project-453713/llm-api
+          ports:
+            - containerPort: 8000
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: llm-api-service
+spec:
+  selector:
+    app: llm-api
+  ports:
+    - port: 80
+      targetPort: 8000
+  type: LoadBalancer
